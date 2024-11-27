@@ -16,9 +16,14 @@ const Register: React.FC = () => {
         onFinish={onFinish}
       >
         <Form.Item
-          name="email"
-          label="E-mail"
-          rules={[{ type: 'email', message: 'The input is not valid E-mail!' }, { required: true, message: 'Please input your E-mail!' }]}
+          name="username"
+          label="Username"
+          rules={[
+            {
+              required: true,
+              message: 'Please input your Username!',
+            },
+          ]}
         >
           <Input />
         </Form.Item>

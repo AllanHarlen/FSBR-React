@@ -1,5 +1,5 @@
 import './LayoutPrincipal.css';
-import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { MenuFoldOutlined, MenuUnfoldOutlined, StepBackwardOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';  // Adicionar Outlet
@@ -20,6 +20,9 @@ const LayoutPrincipal: React.FC = () => {
             </Menu.Item>
             <Menu.Item key="2" icon={<VideoCameraOutlined />}>
               <Link to="/categorias">Categoria</Link>
+            </Menu.Item>
+            <Menu.Item key="3" icon={<StepBackwardOutlined/>}>
+              <Link to="/Login">Sair</Link>
             </Menu.Item>
           </Menu>
         </Sider>

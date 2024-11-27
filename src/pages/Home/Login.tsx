@@ -8,7 +8,7 @@ const Login = () => {
   const navigate = useNavigate();
   const onFinish = (values: LoginType) => {
     console.log('Received values of form: ', values);
-    navigate('/home');
+    navigate('/produtos');
   };
 
   return (
