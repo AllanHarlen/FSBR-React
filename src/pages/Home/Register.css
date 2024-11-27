@@ -1,0 +1,47 @@
+/* index.css */
+
+/* Container do formulário */
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Preenche toda a altura da tela */
+    background: #f0f2f5;
+  }
+  
+  .ant-form {
+    width: 100%;
+    max-width: 600px; /* Define o tamanho máximo do formulário */
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .ant-form {
+      width: 90%; /* Torna o formulário mais estreito em telas menores */
+      padding: 15px;
+    }
+  }
+  
+  /* Estilo dos Links */
+  a {
+    color: #1890ff;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Ajustes para tornar o formulário mais legível e organizado */
+  .ant-form-item-label {
+    font-weight: 600;
+  }
+  
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+  

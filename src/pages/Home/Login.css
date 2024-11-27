@@ -1,0 +1,52 @@
+/* Login.css */
+
+/* Container do formulário */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Preenche toda a altura da tela */
+  background: #f0f2f5;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 300px; /* Tamanho máximo do formulário */
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.site-form-item-icon {
+  color: rgba(0, 0, 0, 0.25);
+}
+
+/* Estilo do link "Esqueci a senha" alinhado à direita */
+.login-form-forgot {
+  float: right;
+  font-size: 12px;
+}
+
+/* Botão ocupa toda a largura do formulário */
+.login-form-button {
+  width: 100%;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .login-form {
+    width: 90%; /* Torna o formulário mais estreito em telas menores */
+    padding: 15px;
+  }
+}
+
+/* Estilo dos Links */
+a {
+  color: #1890ff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
