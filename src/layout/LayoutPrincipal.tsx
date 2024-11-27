@@ -1,40 +1,50 @@
-import React from 'react';
-import { Flex, Layout } from 'antd';
+import './LayoutPrincipal.css';
+import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { Layout, Menu } from 'antd';
+import React, { useState } from 'react';
+import { Link, Outlet } from 'react-router-dom';  // Adicionar Outlet
 
-const { Header, Footer, Content } = Layout;
+const { Header, Sider, Content } = Layout;
 
-const headerStyle: React.CSSProperties = {
-  textAlign: 'center',
-  color: '#fff',
-  paddingInline: 48,
-  backgroundColor: '#4096ff',
+const LayoutPrincipal: React.FC = () => {
+  const [collapsed, setCollapsed] = useState(false);
+
+  return (
+    <div className="layout-container">
+      <Layout>
+        <Sider trigger={null} collapsible collapsed={collapsed}>
+          <div className="logo" />
+          <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+            <Menu.Item key="1" icon={<UserOutlined />}>
+              <Link to="/produtos">Produtos</Link>
+            </Menu.Item>
+            <Menu.Item key="2" icon={<VideoCameraOutlined />}>
+              <Link to="/categorias">Categoria</Link>
+            </Menu.Item>
+          </Menu>
+        </Sider>
+        <Layout className="site-layout">
+          <Header className="site-layout-background" style={{ padding: 0 }}>
+            {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+              className: 'trigger',
+              onClick: () => setCollapsed(!collapsed),
+            })}
+          </Header>
+          <Content
+            className="site-layout-background"
+            style={{
+              margin: '24px 16px',
+              padding: 24,
+              minHeight: 280,
+            }}
+          >
+            {/* O conteúdo será injetado aqui com o Outlet */}
+            <Outlet />
+          </Content>
+        </Layout>
+      </Layout>
+    </div>
+  );
 };
-
-const contentStyle: React.CSSProperties = {
-  textAlign: 'center',
-  color: '#fff',
-  backgroundColor: '#0958d9',
-};
-
-const footerStyle: React.CSSProperties = {
-  textAlign: 'center',
-  color: '#fff',
-  backgroundColor: '#4096ff',
-};
-
-const layoutStyle = {
-  borderRadius: 8,
-  overflow: 'hidden',
-};
-
-const LayoutPrincipal: React.FC = () => (
-  <Flex gap="middle" wrap>
-    <Layout style={layoutStyle}>
-      <Header style={headerStyle}>Header</Header>
-      <Content style={contentStyle}>Content</Content>
-      <Footer style={footerStyle}>Footer</Footer>
-    </Layout>
-  </Flex>
-);
 
 export default LayoutPrincipal;

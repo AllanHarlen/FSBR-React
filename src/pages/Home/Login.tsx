@@ -2,10 +2,13 @@ import './Login.css';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import LoginType from '../../types/Login';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const navigate = useNavigate();
   const onFinish = (values: LoginType) => {
     console.log('Received values of form: ', values);
+    navigate('/home');
   };
 
   return (
@@ -58,7 +61,7 @@ const Login = () => {
           <Button type="primary" htmlType="submit" className="login-form-button">
             Log in
           </Button>
-          Or <a href="">register now!</a>
+          Or <Link to="/register"> register now! </Link>
         </Form.Item>
       </Form>
     </div>
