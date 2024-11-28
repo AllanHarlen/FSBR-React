@@ -73,14 +73,13 @@ export const apiSlice = createApi({
       invalidatesTags: ['Category'],
     }),
 
-    // Endpoints para Usuários
     adicionarUsuario: builder.mutation<Usuario, UsuarioRequest>({
       query: (usuario) => ({
         url: 'Usuario/AdicionarUsuario',
         method: 'POST',
         body: usuario,
       }),
-      invalidatesTags: ['Usuario'], // Atualiza qualquer cache relacionado a usuários
+      invalidatesTags: ['Usuario'], 
     }),
     autorizarUsuario: builder.mutation<AuthResponse, UsuarioRequest>({
       query: (usuario) => ({

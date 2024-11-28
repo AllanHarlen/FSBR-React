@@ -25,17 +25,62 @@ const Produtos: React.FC = () => {
 
   const onAddProduct = () => {
     setIsEditingProduct(true);
-    setEditingProduct({ id: 0, name: "", price: 0, categories: [] });
+    setEditingProduct({ name: "", price: 0, categoryid: 0 });
   };
 
   const onEditProduct = (record: Product) => {
     setIsEditingProduct(true);
-    setEditingProduct({ ...record });
+    // Ajusta o estado do produto para incluir o ID da categoria
+    setEditingProduct({
+      ...record,
+      categoryid: record.category?.id ?? 0,  // Preenche o campo categoryid com o id da categoria do produto
+    });
   };
 
   const onSaveProduct = async (record: Product) => {
+    // Validações
+    if (!record.name || record.name.trim() === "") {
+      setAlertInfo({
+        type: "error",
+        message: "Erro",
+        description: "O nome do produto é obrigatório.",
+      });
+      return;
+    }
+    if (record.price <= 0) {
+      setAlertInfo({
+        type: "error",
+        message: "Erro",
+        description: "O preço do produto deve ser maior que 0.",
+      });
+      return;
+    }
+    if (!record.categoryid) {
+      setAlertInfo({
+        type: "error",
+        message: "Erro",
+        description: "A categoria é obrigatória.",
+      });
+      return;
+    }
+
     try {
-      if (record.id === 0) {
+      if (record.id !== undefined) {
+        const result = await updateProduct({ id: record.id, product: { ...record } });
+        if ("data" in result && result.data) {
+          setAlertInfo({
+            type: "success",
+            message: "Sucesso",
+            description: "Produto atualizado com sucesso!",
+          });
+        } else if ("error" in result && isFetchBaseQueryError(result.error)) {
+          setAlertInfo({
+            type: "error",
+            message: "Erro",
+            description: `Erro ao atualizar produto: ${result.error.data || "Tente novamente mais tarde."}`,
+          });
+        }
+      } else {
         const result = await createProduct(record);
         if ("data" in result && result.data) {
           setAlertInfo({
@@ -48,21 +93,6 @@ const Produtos: React.FC = () => {
             type: "error",
             message: "Erro",
             description: `Erro ao criar produto: ${result.error.data || "Tente novamente mais tarde."}`,
-          });
-        }
-      } else if (record.id !== undefined) {
-        const result = await updateProduct({ id: record.id, product: record });
-        if ("data" in result && result.data) {
-          setAlertInfo({
-            type: "success",
-            message: "Sucesso",
-            description: "Produto atualizado com sucesso!",
-          });
-        } else if ("error" in result && isFetchBaseQueryError(result.error)) {
-          setAlertInfo({
-            type: "error",
-            message: "Erro",
-            description: `Erro ao atualizar produto: ${result.error.data || "Tente novamente mais tarde."}`,
           });
         }
       }
@@ -86,8 +116,8 @@ const Produtos: React.FC = () => {
       onOk: async () => {
         try {
           if (record.id !== undefined) {
-            const result = await deleteProduct(record.id); // Chamada assíncrona à API
-            
+            const result = await deleteProduct(record.id);
+
             if ("error" in result && isFetchBaseQueryError(result.error)) {
               setAlertInfo({
                 type: "error",
@@ -112,7 +142,6 @@ const Produtos: React.FC = () => {
       },
     });
   };
-  
 
   if (productsLoading || categoriesLoading) return <Spin tip="Carregando dados..." />;
   if (productsError || categoriesError) return <Alert message="Erro ao carregar dados" type="error" />;
@@ -134,10 +163,18 @@ const Produtos: React.FC = () => {
         Adicionar Produto
       </Button>
       <EditableTable
-        dataSource={(products || []).map((product) => ({ ...product, key: product.id }))}
+        dataSource={(products || []).map((product) => ({
+          ...product,
+          key: product.id,
+        }))}
         columns={[
           { title: "Nome", dataIndex: "name" },
           { title: "Preço", dataIndex: "price" },
+          {
+            title: "Categoria",
+            dataIndex: ["category", "name"],
+            render: (_: unknown, record: Product) => record.category?.name || "Sem categoria",
+          },
         ]}
         onEdit={onEditProduct}
         onDelete={onDeleteProduct}
@@ -158,16 +195,12 @@ const Produtos: React.FC = () => {
           price: "Preço",
         }}
       >
-        <label>Selecione Categorias:</label>
+        <label>Selecione uma Categoria:</label>
         <Select
-          mode="multiple"
-          value={editingProduct?.categories?.map((category) => category.id) || []}
+          value={editingProduct?.categoryid || undefined}
           onChange={(value) => {
             if (editingProduct) {
-              const selectedCategories = value.map(
-                (id) => categories?.find((category) => category.id === id)!
-              );
-              setEditingProduct({ ...editingProduct, categories: selectedCategories });
+              setEditingProduct({ ...editingProduct, categoryid: value });
             }
           }}
           style={{ width: "100%" }}
