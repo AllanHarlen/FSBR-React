@@ -2,7 +2,7 @@ import './LayoutPrincipal.css';
 import { MenuFoldOutlined, MenuUnfoldOutlined, StepBackwardOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import React, { useState } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';  // Importar useNavigate
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 const { Header, Sider, Content } = Layout;
 
