@@ -1,46 +1,142 @@
-# Getting Started with Create React App
+# FSBR React
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este é um projeto de frontend desenvolvido em **React** utilizando uma estrutura moderna com suporte a rotas protegidas, autenticação via token JWT, gerenciamento global de estado com **Redux Toolkit**, e componentes estilizados com **Ant Design**.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🛠️ **Tecnologias Utilizadas**
 
-### `npm start`
+### **Frontend**
+- **React**: Biblioteca principal para a construção da interface do usuário.
+- **React Router DOM**: Gerenciamento de rotas e navegação.
+- **Ant Design**: Biblioteca de componentes UI para estilização e usabilidade.
+- **TypeScript**: Tipagem estática para maior segurança no desenvolvimento.
+- **Redux Toolkit**: Gerenciamento de estado global simplificado.
+- **RTK Query**: Realização de requisições assíncronas e gerenciamento de cache.
+- **LocalStorage**: Persistência de dados de autenticação no navegador.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 📂 **Estrutura do Projeto**
 
-### `npm test`
+```plaintext
+src/
+├── app/                    # Configurações gerais da aplicação
+│   ├── store.ts            # Configuração do Redux Toolkit
+├── assets/  
+│   ├── fonts.ts            
+│   ├── imagens.ts          
+│   ├── styles.ts           
+├── components/             # Componentes reutilizáveis
+│   ├── EditableModal.tsx   # Componente genérico de modal com campos editáveis
+│   ├── EditableTable.tsx   # Tabela editável reutilizável
+│   ├── PrivateRoute.tsx    # Componente para proteger rotas
+├── layout/                 # Layout principal da aplicação
+│   ├── LayoutPrincipal.tsx # Layout com menu e conteúdo dinâmico
+├── pages/                  # Páginas do sistema
+│   ├── Crud/               # Páginas para CRUD
+│   │   ├── Produtos.tsx    # Gerenciamento de produtos
+│   │   ├── Categorias.tsx  # Gerenciamento de categorias
+│   ├── Home/               # Páginas públicas
+│   │   ├── Login.tsx       # Página de login
+│   │   ├── Register.tsx    # Página de registro
+├── services/               # API e hooks customizados
+│   ├── apiSlice.ts         # Configuração e endpoints da API
+│   ├── useAuth.ts          # Hook customizado para autenticação
+├── types/                  # Tipos TypeScript para o projeto
+│   ├── Product.ts          # Definição do tipo Produto
+│   ├── Category.ts         # Definição do tipo Categoria
+│   ├── Usuario.ts          # Tipos para autenticação de usuário
+├── index.tsx               # Entrada principal do React
+├── reportWebVitals.ts      # Ferramenta de medição de performance
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 🚀 **Funcionalidades**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### **Autenticação**
+- Implementada com tokens JWT.
+- Persistência em `localStorage` com suporte à expiração.
+- Hook `useAuth` para login, logout e validação do token.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### **Rotas Protegidas**
+- Utilização de um componente `PrivateRoute` para garantir acesso apenas a usuários autenticados.
+- Redirecionamento automático para `/login` quando não autenticado.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### **CRUD**
+- **Produtos**:
+  - Listagem de produtos com nome, preço e categoria.
+  - Adição, edição e remoção de produtos.
+  - Seleção de categoria diretamente do modal de edição.
+- **Categorias**:
+  - Listagem de categorias.
+  - Adição, edição e remoção de categorias.
 
-### `npm run eject`
+### **Gerenciamento de Estado**
+- **Redux Toolkit**:
+  - Armazenamento global de dados.
+  - Configuração simplificada com `apiSlice` para operações assíncronas.
+- **RTK Query**:
+  - Atualização em tempo real dos dados de `Produtos` e `Categorias`.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+---
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🔗 **Rotas do Projeto**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### **Públicas**
+| Caminho      | Descrição                       |
+|--------------|---------------------------------|
+| `/login`     | Página de login.               |
+| `/register`  | Página de registro de usuários.|
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### **Protegidas**
+| Caminho         | Descrição                     |
+|-----------------|-------------------------------|
+| `/produtos`     | Gerenciamento de produtos.    |
+| `/categorias`   | Gerenciamento de categorias.  |
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🔧 **Configuração e Execução**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### **Pré-requisitos**
+- Node.js instalado.
+- Gerenciador de pacotes (npm ou yarn).
+
+### **Passos**
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/fsbr-react.git
+   cd fsbr-react
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Execute o projeto:
+   ```bash
+   npm start
+   ```
+4. Acesse o sistema em [http://localhost:3000](http://localhost:3000).
+
+---
+
+## 📌 **Pontos de Destaque**
+
+- **Segurança**: Rotas protegidas garantem que apenas usuários autenticados possam acessar as páginas privadas.
+- **Interface Moderna**: Ant Design facilita a criação de componentes elegantes e responsivos.
+- **Eficiência**: RTK Query gerencia cache de forma otimizada, reduzindo a necessidade de chamadas repetidas à API.
+- **Flexibilidade**: Estrutura modular facilita a escalabilidade do sistema.
+
+---
+
+## ✨ **Melhorias Futuras**
+- Implementar testes unitários para componentes e hooks.
+- Adicionar paginação nas tabelas de Produtos e Categorias.
+- Melhorar o gerenciamento de expiração do token com interceptadores no RTK Query.
+
+---
+
+## 📄 **Licença**
+Este projeto está licenciado sob a MIT License. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
