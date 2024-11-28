@@ -1,29 +1,27 @@
-// src/pages/Crud/Produtos.tsx
 import React, { useState } from "react";
-import { Button, Modal, Select } from "antd";
+import { Button, Modal, Select, Spin, Alert } from "antd";
+import {
+  useGetProductsListQuery,
+  useCreateProductMutation,
+  useDeleteProductMutation,
+  useUpdateProductMutation,
+  useGetCategoriesListQuery,
+} from "../../services/apiSlice";
 import { Product } from "../../types/Product";
-import { Category } from "../../types/Category"; // Importando o tipo Category
 import EditableTable from "../../components/EditableTable";
 import EditableModal from "../../components/EditableModal";
-
-// Dados de exemplo de Produtos
-const sampleProducts: Product[] = [
-  { id: 1, name: "Product A", price: 100, categories: [{ id: 1, name: "Category 1", description: "Description 1" }] },
-  { id: 2, name: "Product B", price: 150, categories: [{ id: 2, name: "Category 2", description: "Description 2" }] },
-  { id: 3, name: "Product C", price: 200, categories: [{ id: 3, name: "Category 3", description: "Description 3" }] },
-];
-
-// Dados de exemplo de Categorias
-const sampleCategories: Category[] = [
-  { id: 1, name: "Category 1", description: "Description 1" },
-  { id: 2, name: "Category 2", description: "Description 2" },
-  { id: 3, name: "Category 3", description: "Description 3" },
-];
+import isFetchBaseQueryError from "../../utils/Utilidades";
 
 const Produtos: React.FC = () => {
-  const [productDataSource, setProductDataSource] = useState<Product[]>(sampleProducts);
+  const { data: products, error: productsError, isLoading: productsLoading } = useGetProductsListQuery();
+  const { data: categories, error: categoriesError, isLoading: categoriesLoading } = useGetCategoriesListQuery();
+  const [createProduct] = useCreateProductMutation();
+  const [deleteProduct] = useDeleteProductMutation();
+  const [updateProduct] = useUpdateProductMutation();
+
   const [isEditingProduct, setIsEditingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [alertInfo, setAlertInfo] = useState<{ type: "success" | "error"; message: string; description: string } | null>(null);
 
   const onAddProduct = () => {
     setIsEditingProduct(true);
@@ -35,39 +33,111 @@ const Produtos: React.FC = () => {
     setEditingProduct({ ...record });
   };
 
-  const onSaveProduct = (record: Product) => {
-    if (record.id === 0) {
-      const newProduct: Product = { ...record, id: Math.floor(Math.random() * 1000) };
-      setProductDataSource((prev) => [...prev, newProduct]);
-    } else {
-      setProductDataSource((prev) =>
-        prev.map((item) => (item.id === record.id ? record : item))
-      );
+  const onSaveProduct = async (record: Product) => {
+    try {
+      if (record.id === 0) {
+        const result = await createProduct(record);
+        if ("data" in result && result.data) {
+          setAlertInfo({
+            type: "success",
+            message: "Sucesso",
+            description: "Produto criado com sucesso!",
+          });
+        } else if ("error" in result && isFetchBaseQueryError(result.error)) {
+          setAlertInfo({
+            type: "error",
+            message: "Erro",
+            description: `Erro ao criar produto: ${result.error.data || "Tente novamente mais tarde."}`,
+          });
+        }
+      } else if (record.id !== undefined) {
+        const result = await updateProduct({ id: record.id, product: record });
+        if ("data" in result && result.data) {
+          setAlertInfo({
+            type: "success",
+            message: "Sucesso",
+            description: "Produto atualizado com sucesso!",
+          });
+        } else if ("error" in result && isFetchBaseQueryError(result.error)) {
+          setAlertInfo({
+            type: "error",
+            message: "Erro",
+            description: `Erro ao atualizar produto: ${result.error.data || "Tente novamente mais tarde."}`,
+          });
+        }
+      }
+    } catch (error) {
+      setAlertInfo({
+        type: "error",
+        message: "Erro",
+        description: "Erro desconhecido ao salvar o produto.",
+      });
+    } finally {
+      setIsEditingProduct(false);
+      setEditingProduct(null);
     }
-    setIsEditingProduct(false);
-    setEditingProduct(null);
   };
 
-  const onDeleteProduct = (record: Product) => {
+  const onDeleteProduct = async (record: Product) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this product?",
-      okText: "Yes",
+      title: "Tem certeza que deseja deletar este produto?",
+      okText: "Sim",
       okType: "danger",
-      onOk: () => {
-        setProductDataSource((prev) => prev.filter((item) => item.id !== record.id));
+      onOk: async () => {
+        try {
+          if (record.id !== undefined) {
+            const result = await deleteProduct(record.id); // Chamada assíncrona à API
+            
+            if ("error" in result && isFetchBaseQueryError(result.error)) {
+              setAlertInfo({
+                type: "error",
+                message: "Erro",
+                description: `Erro ao deletar produto: ${result.error.data || "Tente novamente mais tarde."}`,
+              });
+            } else {
+              setAlertInfo({
+                type: "success",
+                message: "Sucesso",
+                description: "Produto deletado com sucesso!",
+              });
+            }
+          }
+        } catch (error) {
+          setAlertInfo({
+            type: "error",
+            message: "Erro",
+            description: "Erro desconhecido ao deletar o produto.",
+          });
+        }
       },
     });
   };
+  
+
+  if (productsLoading || categoriesLoading) return <Spin tip="Carregando dados..." />;
+  if (productsError || categoriesError) return <Alert message="Erro ao carregar dados" type="error" />;
 
   return (
     <div>
-      <Button onClick={onAddProduct}>Add New Product</Button>
-
+      {alertInfo && (
+        <Alert
+          message={alertInfo.message}
+          description={alertInfo.description}
+          type={alertInfo.type}
+          showIcon
+          closable
+          afterClose={() => setAlertInfo(null)}
+          style={{ marginBottom: 16 }}
+        />
+      )}
+      <Button type="primary" onClick={onAddProduct} style={{ marginBottom: 16 }}>
+        Adicionar Produto
+      </Button>
       <EditableTable
-        dataSource={productDataSource}
+        dataSource={(products || []).map((product) => ({ ...product, key: product.id }))}
         columns={[
-          { title: "Name", dataIndex: "name" },
-          { title: "Price", dataIndex: "price" },
+          { title: "Nome", dataIndex: "name" },
+          { title: "Preço", dataIndex: "price" },
         ]}
         onEdit={onEditProduct}
         onDelete={onDeleteProduct}
@@ -84,32 +154,30 @@ const Produtos: React.FC = () => {
           }
         }}
         fields={{
-          name: "Name",
-          price: "Price",
+          name: "Nome",
+          price: "Preço",
         }}
       >
-        <div>
-          <label>Select Categories:</label>
-          <Select
-            mode="multiple"
-            value={editingProduct?.categories?.map((category) => category.id) || []}
-            onChange={(value) => {
-              if (editingProduct) {
-                const selectedCategories = value.map(
-                  (id) => sampleCategories.find((category) => category.id === id)!
-                );
-                setEditingProduct({ ...editingProduct, categories: selectedCategories });
-              }
-            }}
-            style={{ width: "100%" }}
-          >
-            {sampleCategories.map((category) => (
-              <Select.Option key={category.id} value={category.id}>
-                {category.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
+        <label>Selecione Categorias:</label>
+        <Select
+          mode="multiple"
+          value={editingProduct?.categories?.map((category) => category.id) || []}
+          onChange={(value) => {
+            if (editingProduct) {
+              const selectedCategories = value.map(
+                (id) => categories?.find((category) => category.id === id)!
+              );
+              setEditingProduct({ ...editingProduct, categories: selectedCategories });
+            }
+          }}
+          style={{ width: "100%" }}
+        >
+          {categories?.map((category) => (
+            <Select.Option key={category.id} value={category.id}>
+              {category.name}
+            </Select.Option>
+          ))}
+        </Select>
       </EditableModal>
     </div>
   );

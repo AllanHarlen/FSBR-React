@@ -7,24 +7,28 @@ import Register from './pages/Home/Register';
 import LayoutPrincipal from './layout/LayoutPrincipal';
 import Produtos from './pages/Crud/Produtos';
 import Categorias from './pages/Crud/Categorias';
+import { Provider } from 'react-redux';
+import { store } from './app/store';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<LayoutPrincipal />} />
-          <Route element={<LayoutPrincipal />}>
-            <Route path="/produtos" element={<Produtos />} />
-            <Route path="/categorias" element={<Categorias />} />
-          </Route>          
-        </Routes>
-    </BrowserRouter>
+  <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/home" element={<LayoutPrincipal />} />
+            <Route element={<LayoutPrincipal />}>
+              <Route path="/produtos" element={<Produtos />} />
+              <Route path="/categorias" element={<Categorias />} />
+            </Route>          
+          </Routes>
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>
 );
 
