@@ -2,12 +2,20 @@ import './LayoutPrincipal.css';
 import { MenuFoldOutlined, MenuUnfoldOutlined, StepBackwardOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import React, { useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';  // Adicionar Outlet
+import { Link, Outlet, useNavigate } from 'react-router-dom';  // Importar useNavigate
 
 const { Header, Sider, Content } = Layout;
 
 const LayoutPrincipal: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
+
+  // Função para lidar com o logout
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   return (
     <div className="layout-container">
@@ -21,8 +29,8 @@ const LayoutPrincipal: React.FC = () => {
             <Menu.Item key="2" icon={<VideoCameraOutlined />}>
               <Link to="/categorias">Categoria</Link>
             </Menu.Item>
-            <Menu.Item key="3" icon={<StepBackwardOutlined/>}>
-              <Link to="/Login">Sair</Link>
+            <Menu.Item key="3" icon={<StepBackwardOutlined />} onClick={handleLogout}>  {/* Adicionei o evento de logout */}
+              Sair
             </Menu.Item>
           </Menu>
         </Sider>

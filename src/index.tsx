@@ -8,31 +8,36 @@ import LayoutPrincipal from './layout/LayoutPrincipal';
 import Produtos from './pages/Crud/Produtos';
 import Categorias from './pages/Crud/Categorias';
 import { Provider } from 'react-redux';
+import PrivateRoute from "./components/PrivateRoute"; // Importando o PrivateRoute
 import { store } from './app/store';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
-  <Provider store={store}>
+    <Provider store={store}>
       <BrowserRouter>
         <Routes>
-            <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/home" element={<LayoutPrincipal />} />
-            <Route element={<LayoutPrincipal />}>
-              <Route path="/produtos" element={<Produtos />} />
-              <Route path="/categorias" element={<Categorias />} />
-            </Route>          
-          </Routes>
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/home" element={<LayoutPrincipal />} />
+          <Route element={<LayoutPrincipal />}>
+            <Route
+              path="/produtos"
+              element={<PrivateRoute element={<Produtos />} />}
+            />
+            <Route
+              path="/categorias"
+              element={<PrivateRoute element={<Categorias />} />}
+            />
+          </Route>
+        </Routes>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

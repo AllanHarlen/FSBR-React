@@ -7,6 +7,26 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Função para verificar se o token expirou
+  const isTokenExpired = (token: string) => {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const decoded = JSON.parse(atob(base64));
+      const expDate = decoded.exp * 1000;
+      return Date.now() >= expDate;
+    } 
+    catch (e) {
+      return true;
+    }
+  };
+
+  const isAuthenticated = () => {
+    const token = localStorage.getItem("token");
+    console.log("Token:" + Boolean(isTokenExpired));
+    return token && !isTokenExpired(token);
+  };
+
   const login = async (loginData: UsuarioRequest) => {
     setLoading(true);
     setError(null);
@@ -16,14 +36,12 @@ export const useAuth = () => {
 
       if ("data" in result && result.data) {
         const { auth, usuario } = result.data as AuthResponse;
-        localStorage.setItem("token", auth);
-        localStorage.setItem("user", JSON.stringify(usuario));
+        localStorage.setItem("token", auth);  // Armazenando o token
+        localStorage.setItem("user", JSON.stringify(usuario)); // Armazenando o usuário
         return usuario;
       } 
       else if ("error" in result) {
-        setError(
-          (result.data as any)?.error || "Erro ao autenticar. Tente novamente mais tarde."
-        );
+        setError((result.data as any)?.error || "Erro ao autenticar. Tente novamente mais tarde.");
       }
     } 
     catch (err: any) {
@@ -41,5 +59,5 @@ export const useAuth = () => {
 
   const getToken = () => localStorage.getItem("token");
 
-  return { login, logout, getToken, loading, error };
+  return { login, logout, isAuthenticated, getToken, loading, error };
 };
